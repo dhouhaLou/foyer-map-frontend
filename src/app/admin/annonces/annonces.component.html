@@ -1,0 +1,300 @@
+<app-admin-header></app-admin-header>
+<div class="main">
+  <div class="card">
+    <div class="card-header bg-white">
+      <h3 class="pull-left">Gestion Annonces</h3>
+      <button class="btn btn-outline-success pull-right" data-toggle="modal" data-target="#newModal"
+              (click)="form.reset(); imageSrc=''">Ajout <i
+        class="fa fa-plus"></i></button>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-success" *ngIf="message">
+        <p class="m-0">{{message}}</p>
+      </div>
+      <table class="table table-bordered bg-white">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">titre</th>
+          <th scope="col">description</th>
+          <th scope="col">Ajouté par</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let annonce of annonces">
+          <th scope="row">{{annonce.id}}</th>
+          <td>{{annonce.titre}}</td>
+          <td>{{annonce.description}}</td>
+          <td>{{annonce.membre.username}}</td>
+          <td>
+            <button type="button" class="btn btn-success rounded ml-2 text-white" (click)="updateModal(annonce)"
+                    data-toggle="modal" data-target="#editModal"><i class="icon-edit"></i></button>
+            <button type="button" class="btn btn-danger rounded ml-2 text-white" (click)="delete(annonce)"><i
+              class="icon-trash-o"></i></button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="new(form.value)">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newModalLabel">Ajout annonce</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" class="form-control shadow-none"
+                   formControlName="titre">
+            <div
+              *ngIf="form.controls.titre.invalid && (form.controls.titre.dirty || form.controls.titre.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.titre.errors.required">
+                Titre est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Ville</label>
+            <select class="form-control shadow-none" formControlName="ville">
+              <option></option>
+              <option *ngFor="let ville of villes"
+                      [value]="ville.name">{{ville.name}}</option>
+            </select>
+            <div
+              *ngIf="form.controls.ville.invalid && (form.controls.ville.dirty || form.controls.ville.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.ville.errors.required">
+                Ville est requis
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label>Telephone</label>
+            <input type="text" class="form-control shadow-none"
+                   formControlName="tel">
+            <div
+              *ngIf="form.controls.tel.invalid && (form.controls.tel.dirty || form.controls.tel.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.tel.errors.required">
+                Telephone est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control shadow-none"
+                      formControlName="description"></textarea>
+            <div
+              *ngIf="form.controls.description.invalid && (form.controls.description.dirty || form.controls.description.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.description.errors.required">
+                Description est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Type</label>
+            <select class="form-control shadow-none" formControlName="type_annonce">
+              <option></option>
+              <option *ngFor="let typeAnnonce of typeAnnonces"
+                      [value]="typeAnnonce.value">{{typeAnnonce.label}}</option>
+            </select>
+            <div
+              *ngIf="form.controls.type_annonce.invalid && (form.controls.type_annonce.dirty || form.controls.type_annonce.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.type_annonce.errors.required">
+                Type est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Membre</label>
+            <select class="form-control shadow-none" formControlName="membre_id">
+              <option></option>
+              <option *ngFor="let user of users" [value]="user.id">{{user.username}}</option>
+            </select>
+            <div
+              *ngIf="form.controls.membre_id.invalid && (form.controls.membre_id.dirty || form.controls.membre_id.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.membre_id.errors.required">
+                Membre est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Image</label>
+
+            <img [src]="imageSrc" style="max-width:300px;max-height:300px; display: block"/>
+            <input class="form-control shadow-none" name="imageUrl" type="file" accept="image/*"
+                   (change)="handleInputChange($event)"/>
+            <div
+              *ngIf="form.controls.image.invalid && (form.controls.image.dirty || form.controls.image.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.image.errors.required">
+                Image est requis
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-danger" data-dismiss="modal" (click)="new(form.value)"
+                  [disabled]="!form.valid">Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="update(form.value)">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Modifier annonce</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" class="form-control shadow-none"
+                   formControlName="titre">
+            <div
+              *ngIf="form.controls.titre.invalid && (form.controls.titre.dirty || form.controls.titre.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.titre.errors.required">
+                Titre est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Ville</label>
+            <select class="form-control shadow-none" formControlName="ville">
+              <option></option>
+              <option *ngFor="let ville of villes"
+                      [value]="ville.name">{{ville.name}}</option>
+            </select>
+            <div
+              *ngIf="form.controls.ville.invalid && (form.controls.ville.dirty || form.controls.ville.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.ville.errors.required">
+                Ville est requis
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label>Telephone</label>
+            <input type="text" class="form-control shadow-none"
+                   formControlName="tel">
+            <div
+              *ngIf="form.controls.tel.invalid && (form.controls.tel.dirty || form.controls.tel.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.tel.errors.required">
+                Telephone est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control shadow-none"
+                      formControlName="description"></textarea>
+            <div
+              *ngIf="form.controls.description.invalid && (form.controls.description.dirty || form.controls.description.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.description.errors.required">
+                Description est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Type</label>
+            <select class="form-control shadow-none" formControlName="type_annonce">
+              <option></option>
+              <option *ngFor="let typeAnnonce of typeAnnonces"
+                      [value]="typeAnnonce.value">{{typeAnnonce.label}}</option>
+            </select>
+            <div
+              *ngIf="form.controls.type_annonce.invalid && (form.controls.type_annonce.dirty || form.controls.type_annonce.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.type_annonce.errors.required">
+                Type est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Membre</label>
+            <select class="form-control shadow-none" formControlName="membre_id">
+              <option></option>
+              <option *ngFor="let user of users" [value]="user.id">{{user.username}}</option>
+            </select>
+            <div
+              *ngIf="form.controls.membre_id.invalid && (form.controls.membre_id.dirty || form.controls.membre_id.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.membre_id.errors.required">
+                Membre est requis
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Image</label>
+
+            <img [src]="imageSrc" style="max-width:300px;max-height:300px; display: block"/>
+            <input class="form-control shadow-none" name="imageUrl" type="file" accept="image/*"
+                   (change)="handleInputChange($event)"/>
+            <div
+              *ngIf="form.controls.image.invalid && (form.controls.image.dirty || form.controls.image.touched)"
+              class="text-danger">
+              <div *ngIf="form.controls.image.errors.required">
+                Image est requis
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary">Annuler</button>
+          <button type="submit" class="btn btn-danger" data-dismiss="modal" (click)="update(form.value)"
+                  [disabled]="!form.valid">Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+<app-admin-footer></app-admin-footer>
