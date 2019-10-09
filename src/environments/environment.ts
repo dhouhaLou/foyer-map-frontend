@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://foyer-map-backend.herokuapp.com/'
+  apiUrl: 'https://foyer-map-backend.herokuapp.com'
 };
 
 /*
