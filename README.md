@@ -1,5 +1,5 @@
 # Dev server  
-Run ng server  
+Run ng serve  
 # Deploy on heroku  
 Heroku branch is ready
 
